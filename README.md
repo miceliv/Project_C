@@ -159,8 +159,6 @@ public:
       map<int, Message*>::iterator m_it; 
       for (m_it = _drafts.begin(); m_it != _drafts.end(); ++m_it)
       {
-         //CORRECTION HERE
-         //delete _drafts[m_it->first];
          delete m_it->second;
          _drafts.erase(m_it);
       }
@@ -196,11 +194,7 @@ private:
 class EmailAccount {
 public:
    EmailAccount(string s);
-   ~EmailAccount(){
-      //delete _drafts;
-      //delete _in;
-      //delete _out;
-   }
+   ~EmailAccount(){ }
    const Name& owner() const { return _owner; }
    Drafts& drafts() { return *_drafts; }
    BaseFolder* in() { return _in; } 
@@ -256,8 +250,6 @@ public:
    void print(int n) const{
       
       if ((n < 1) || (n >= _msg.size())) return;
-      //CORRECTION HERE
-      //else cout << _msg[n];
       else _msg[n]->print();
    }
    void receive(const Message *m) { _msg.push_back(m); }
@@ -278,8 +270,6 @@ public:
    
 protected:
    BaseFolder(EmailAccount *ac)  { _ac=ac;_msg.push_back(NULL); }
-   //BaseFolder(const BaseFolder &orig) = delete;
-   //BaseFolder& operator=(const BaseFolder &rhs) = delete;
    virtual string type() const =0; 
    virtual const Name& tofrom(const Message *m) const=0; 
    Vec<const Message*> _msg;
@@ -341,11 +331,6 @@ private:
 map<Name, EmailAccount*> ISP::_accounts;
 //Drafts
 Drafts::Drafts(EmailAccount *ac){
-      //CORRECTION HERE
-      /*_ac->_owner = ac->owner();
-      _ac->_drafts = ac->drafts();
-      _ac->_in = ac->in();
-      _ac->_out = ac->out();*/
       _ac = ac;
       _newKey = 0;
       _drafts[0] = NULL;
@@ -359,11 +344,8 @@ void Drafts::display()const {
          for (map<int, Message*>::const_iterator mit = _drafts.begin(); mit != _drafts.end(); mit++)
          {
             if (mit->first == 0) continue;
-            //CORRECTION HERE
-            //print(mit->first);
             cout << mit->first<<endl;
-
-            const Message *ptr = mit->second; 
+ 	    const Message *ptr = mit->second; 
             cout <<"to : "<<ptr->to().name()<<endl;
             cout <<"subject : "<<ptr->subject()<<endl;
          }
@@ -398,7 +380,6 @@ Message* Drafts::addDraft(){
 //EmailAccount  
 EmailAccount::EmailAccount(string s){
       _owner.set(s);
-      //CORRECTION HERE
       _drafts = new Drafts(this);
       _in = new Inbox(this);
       _out = new Outbox(this);
@@ -413,36 +394,6 @@ void EmailAccount::send(Message *m) {
 void EmailAccount::receive(Message *m) { _in->receive(m); }
 
 void EmailAccount::insert(Message *m) { _drafts->addDraft(m); }
-
-
-//Inbox
-/*Inbox::Inbox(EmailAccount *ac)  {
-   _ac = ac;
-   _msg.push_back(NULL);
-}*/
-
-//Outbox
-/*
-Outbox::Outbox(EmailAccount *ac) {
-    _ac = ac;
-   _msg.push_back(NULL);
-}*/
-
-//ISP
-/*
-static void ISP::send(Message *m){
-      EmailAccount *ac = _accounts[m->to()];
-      if (ac == NULL){
-         cout << "Delivery failed, to recipient: " << m->to().name() << endl;
-         return;
-      }
-      else{
-         Message *clone = new Message(*m);
-         ac->receive(clone);
-         return;
-      }
-   }
-  */
 
 //Vec
 template<typename T>
