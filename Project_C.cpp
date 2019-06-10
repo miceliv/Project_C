@@ -1,6 +1,3 @@
-//Project_C
-//Project for C++ course
-
 #include<string>
 #include<iostream>
 #include<sstream>
